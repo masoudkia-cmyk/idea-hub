@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install *)",
+      "Bash(cd *)",
+      "Bash(npm view *)",
+      "Bash(npm audit *)",
+      "Bash(node -e \"let d='';process.stdin.on\\('data',c=>d+=c\\);process.stdin.on\\('end',\\(\\)=>{const j=JSON.parse\\(d\\);for\\(const [k,v] of Object.entries\\(j.vulnerabilities\\)\\){console.log\\(k, v.severity, v.range\\);}}\\)\")",
+      "Bash(node -e \"let d='';process.stdin.on\\('data',c=>d+=c\\);process.stdin.on\\('end',\\(\\)=>{const v=JSON.parse\\(d\\).filter\\(x=>x.startsWith\\('5.4'\\)\\);console.log\\(v.slice\\(-15\\).join\\('\\\\n'\\)\\)}\\)\")",
+      "Bash(npm run *)",
+      "Bash(curl -sI http://localhost:5173/idea-hub/)",
+      "Bash(rm -f src/utils/priorityScore.ts src/utils/priorityScore.test.ts src/utils/ideaFilters.ts src/utils/ideaFilters.test.ts src/components/form/IdeaForm.tsx src/components/form/IdeaForm.test.tsx)",
+      "Bash(rmdir src/components/form)"
+    ]
+  }
+}

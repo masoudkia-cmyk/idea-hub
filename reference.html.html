@@ -1,0 +1,641 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#08785f" />
+  <title>صدای ایزی | VOC EasyTrader</title>
+  <style>
+    :root{
+      --bg:#f4f7f6;
+      --surface:#fff;
+      --surface-alt:#f8faf9;
+      --text:#17231f;
+      --muted:#697a74;
+      --line:#e2eae7;
+      --brand:#08785f;
+      --brand-dark:#05624e;
+      --brand-soft:#e8f6f1;
+      --amber:#a96900;
+      --amber-soft:#fff3d9;
+      --blue:#2d5fa6;
+      --blue-soft:#eaf2ff;
+      --purple:#6646aa;
+      --purple-soft:#f0ebff;
+      --danger:#b42318;
+      --danger-soft:#fff0ee;
+      --shadow:0 18px 48px rgba(28,66,54,.08);
+      --shadow-sm:0 8px 24px rgba(28,66,54,.06);
+      --radius:20px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      color:var(--text);
+      background:var(--bg);
+      font-family:Tahoma,Arial,sans-serif;
+      line-height:1.75;
+    }
+    button,input,textarea,select{font:inherit}
+    button{cursor:pointer}
+    a{color:inherit;text-decoration:none}
+    .hidden{display:none!important}
+    .container{width:min(1160px,calc(100% - 32px));margin-inline:auto}
+
+    /* Header */
+    .topbar{
+      position:sticky;top:0;z-index:40;
+      background:rgba(255,255,255,.94);
+      border-bottom:1px solid var(--line);
+      backdrop-filter:blur(16px);
+    }
+    .topbar-inner{height:72px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+    .brand{display:flex;align-items:center;gap:11px;font-weight:900}
+    .logo{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;color:#fff;background:linear-gradient(135deg,var(--brand),#0aa984);box-shadow:0 8px 20px rgba(8,120,95,.22)}
+    .brand-sub{display:block;margin-top:-5px;color:var(--muted);font-size:10px;font-weight:500}
+    .nav{display:flex;gap:6px;align-items:center}
+    .nav button{border:0;background:transparent;color:#566861;border-radius:11px;padding:9px 12px}
+    .nav button:hover,.nav button.active{background:var(--brand-soft);color:var(--brand);font-weight:800}
+    .account{display:flex;gap:8px;align-items:center}
+    .wallet-pill{display:flex;align-items:center;gap:8px;background:#f7faf8;border:1px solid var(--line);border-radius:13px;padding:7px 11px;font-size:11px}
+    .wallet-pill strong{font-size:13px;color:var(--brand)}
+    .avatar{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:#dbeae5;color:var(--brand);font-weight:900}
+
+    /* Buttons */
+    .btn{border:0;border-radius:13px;padding:11px 16px;display:inline-flex;align-items:center;justify-content:center;gap:7px;transition:.18s;font-weight:800}
+    .btn:hover{transform:translateY(-1px)}
+    .btn-primary{background:var(--brand);color:#fff;box-shadow:0 9px 20px rgba(8,120,95,.18)}
+    .btn-primary:hover{background:var(--brand-dark)}
+    .btn-soft{background:var(--brand-soft);color:var(--brand)}
+    .btn-ghost{background:transparent;color:#53645e;border:1px solid transparent}
+    .btn-ghost:hover{background:#f2f6f4;border-color:var(--line)}
+    .btn-outline{background:#fff;border:1px solid var(--line);color:#41534d}
+    .btn-outline:hover{border-color:#a9cbc0}
+    .btn-sm{padding:8px 11px;border-radius:10px;font-size:11px}
+    .btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+
+    /* Views */
+    main{padding:30px 0 76px}
+    .view{display:none}
+    .view.active{display:block}
+
+    /* Composer */
+    .composer-shell{display:grid;grid-template-columns:minmax(0,1fr) 310px;gap:22px;align-items:start}
+    .composer{
+      background:var(--surface);border:1px solid var(--line);border-radius:26px;padding:30px;box-shadow:var(--shadow);position:relative;overflow:hidden
+    }
+    .composer:before{content:"";position:absolute;inset:0 0 auto;height:5px;background:linear-gradient(90deg,var(--brand),#0db48d)}
+    .kicker{display:inline-flex;align-items:center;gap:7px;background:var(--brand-soft);color:var(--brand);border-radius:999px;padding:5px 10px;font-size:11px;font-weight:900}
+    .composer h1{font-size:29px;line-height:1.45;margin:15px 0 7px}
+    .composer-intro{color:var(--muted);margin:0 0 22px;font-size:14px}
+    .idea-input{width:100%;border:1px solid #cfdbd7;border-radius:17px;padding:16px 17px;min-height:132px;resize:vertical;outline:none;background:#fcfefd;transition:.2s;font-size:15px}
+    .idea-input:focus{border-color:#73b8a3;box-shadow:0 0 0 4px rgba(8,120,95,.08);background:#fff}
+    .composer-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:12px;flex-wrap:wrap}
+    .char-count{font-size:10px;color:#8a9893}
+    .cost{display:inline-flex;align-items:center;gap:6px;color:#62736d;font-size:11px}
+    .token-icon{width:22px;height:22px;display:inline-grid;place-items:center;border-radius:50%;background:linear-gradient(145deg,#e9fff6,#b8ead9);color:var(--brand);font-weight:900;border:1px solid #9dd9c5}
+
+    .wallet-card{background:linear-gradient(145deg,#0b6d59,#0a9171);color:#fff;border-radius:23px;padding:22px;box-shadow:var(--shadow);position:sticky;top:94px}
+    .wallet-head{display:flex;justify-content:space-between;align-items:center}
+    .wallet-head span{font-size:11px;color:#d5eee6}
+    .wallet-balance{font-size:35px;font-weight:900;margin:9px 0 0}
+    .wallet-label{font-size:11px;color:#d5eee6}
+    .wallet-divider{height:1px;background:rgba(255,255,255,.16);margin:18px 0}
+    .wallet-row{display:flex;justify-content:space-between;gap:10px;font-size:11px;margin:9px 0}
+    .wallet-row strong{font-size:12px}
+    .wallet-card .btn{width:100%;margin-top:14px;background:#fff;color:var(--brand)}
+
+    /* AI similar ideas */
+    .ai-box{margin-top:18px;border:1px solid #cde6de;background:linear-gradient(145deg,#fbfffd,#f0faf6);border-radius:18px;overflow:hidden;display:none}
+    .ai-box.show{display:block;animation:fadeIn .22s ease}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+    .ai-head{padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid #dbece6}
+    .ai-title{display:flex;align-items:center;gap:9px;font-size:12px;font-weight:900;color:#315e50}
+    .ai-dot{width:10px;height:10px;border-radius:50%;background:#11b489;box-shadow:0 0 0 5px rgba(17,180,137,.1)}
+    .ai-state{font-size:10px;color:#6e857d}
+    .similar-list{padding:10px}
+    .similar-item{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;padding:12px;border-radius:13px;transition:.15s}
+    .similar-item:hover{background:#fff}
+    .similar-item+.similar-item{border-top:1px solid #e5efeb}
+    .similar-title{font-size:12px;font-weight:900;margin-bottom:2px}
+    .similar-meta{display:flex;gap:8px;color:#81908b;font-size:9px;flex-wrap:wrap}
+    .match{color:var(--brand);background:var(--brand-soft);border-radius:999px;padding:2px 7px;font-weight:800}
+    .continue-box{padding:13px 16px;border-top:1px solid #dbece6;display:flex;align-items:center;justify-content:space-between;gap:12px;background:#fff}
+    .continue-box span{font-size:10px;color:#71817b}
+
+    /* Section */
+    .section-head{display:flex;align-items:end;justify-content:space-between;gap:16px;margin:34px 0 14px}
+    .section-head h2{margin:0;font-size:20px}
+    .section-head p{margin:2px 0 0;color:var(--muted);font-size:12px}
+    .filters{display:flex;gap:7px;flex-wrap:wrap}
+    .chip{border:1px solid var(--line);background:#fff;color:#5b6d66;border-radius:999px;padding:7px 11px;font-size:10px}
+    .chip.active{background:#173e34;color:#fff;border-color:#173e34}
+
+    /* Ideas */
+    .ideas-layout{display:grid;grid-template-columns:minmax(0,1fr) 285px;gap:20px;align-items:start}
+    .idea-list{display:grid;gap:11px}
+    .idea-card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:17px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;box-shadow:var(--shadow-sm);transition:.18s}
+    .idea-card:hover{border-color:#bdd8cf;transform:translateY(-1px)}
+    .idea-main{min-width:0}
+    .idea-flags{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:6px}
+    .status,.tag{display:inline-flex;align-items:center;border-radius:999px;padding:3px 8px;font-size:9px;font-weight:800}
+    .status.review{background:var(--amber-soft);color:#8d5b00}
+    .status.planned{background:var(--blue-soft);color:var(--blue)}
+    .status.progress{background:var(--purple-soft);color:var(--purple)}
+    .status.done{background:#e6f7ef;color:#14744f}
+    .tag{background:#f0f4f2;color:#65766f;font-weight:600}
+    .idea-title{font-size:15px;font-weight:900;line-height:1.6;cursor:pointer}
+    .idea-title:hover{color:var(--brand)}
+    .idea-desc{font-size:11px;color:#687a73;margin:4px 0 10px;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+    .idea-meta{display:flex;align-items:center;gap:11px;color:#8b9792;font-size:9px;flex-wrap:wrap}
+    .idea-actions{width:110px;display:flex;flex-direction:column;justify-content:center;align-items:stretch;gap:7px}
+    .support-btn{border:1px solid #bed9d0;background:#f5fbf8;color:var(--brand);border-radius:13px;padding:8px;font-weight:900;font-size:11px}
+    .support-btn.active{background:var(--brand);color:#fff;border-color:var(--brand)}
+    .support-count{text-align:center;font-size:9px;color:#7a8a84}
+
+    .side-stack{display:grid;gap:13px;position:sticky;top:94px}
+    .panel{background:#fff;border:1px solid var(--line);border-radius:18px;padding:17px}
+    .panel h3{font-size:13px;margin:0 0 11px}
+    .panel p{font-size:10px;color:var(--muted);margin:0}
+    .moderator-line{display:flex;gap:9px;align-items:flex-start;margin:12px 0}
+    .mod-icon{width:28px;height:28px;border-radius:10px;display:grid;place-items:center;background:var(--brand-soft);color:var(--brand);font-size:12px;flex:0 0 auto}
+    .moderator-line strong{display:block;font-size:10px}
+    .moderator-line span{display:block;color:#84928d;font-size:9px;margin-top:1px}
+    .legend{display:grid;gap:9px}
+    .legend-row{display:flex;justify-content:space-between;gap:9px;font-size:10px}
+    .legend-row span{color:var(--muted)}
+
+    /* Wallet and rewards */
+    .stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+    .stat{background:#fff;border:1px solid var(--line);border-radius:18px;padding:19px}
+    .stat-label{font-size:10px;color:var(--muted)}
+    .stat strong{display:block;font-size:26px;margin:5px 0 1px}
+    .stat small{color:#82908b;font-size:9px}
+    .economy-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}
+    .economy-card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:22px}
+    .economy-card h3{margin:0 0 5px;font-size:15px}
+    .economy-card>p{font-size:10px;color:var(--muted);margin:0 0 15px}
+    .rule-list{display:grid;gap:9px}
+    .rule{display:flex;justify-content:space-between;gap:12px;background:var(--surface-alt);border-radius:12px;padding:10px 11px;font-size:10px}
+    .delta{font-weight:900;direction:ltr}
+    .delta.plus{color:var(--brand)}
+    .delta.minus{color:var(--danger)}
+    .progress{height:8px;background:#edf2f0;border-radius:999px;overflow:hidden}
+    .progress>span{display:block;height:100%;background:linear-gradient(90deg,var(--brand),#14b68c);border-radius:inherit}
+    .cashout{margin-top:14px;background:var(--brand-soft);border:1px solid #d0ebe2;border-radius:14px;padding:13px}
+    .cashout-head{display:flex;justify-content:space-between;font-size:10px;margin-bottom:7px}
+    .cashout small{font-size:9px;color:#6e817a}
+    .history-table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line);border-radius:18px;overflow:hidden;margin-top:14px}
+    .history-table th,.history-table td{text-align:right;padding:12px 14px;border-bottom:1px solid var(--line);font-size:10px}
+    .history-table th{background:#f7faf8;color:#687970;font-size:9px}
+
+    /* Bonuses */
+    .bonus-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}
+    .bonus-card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:19px;position:relative;overflow:hidden}
+    .bonus-card:before{content:"";position:absolute;width:130px;height:130px;border-radius:50%;left:-60px;top:-60px;background:rgba(170,105,0,.07)}
+    .bonus-badge{display:inline-flex;background:var(--amber-soft);color:#855700;border-radius:999px;padding:4px 9px;font-size:9px;font-weight:900}
+    .bonus-pool{font-size:23px;font-weight:900;color:var(--amber);margin:12px 0 2px}
+    .bonus-title{font-size:13px;font-weight:900;margin:9px 0 3px}
+    .bonus-meta{font-size:9px;color:var(--muted)}
+    .split{display:grid;grid-template-columns:25fr 60fr 15fr;height:9px;border-radius:999px;overflow:hidden;margin:14px 0 7px}
+    .split span:nth-child(1){background:#0c8668}.split span:nth-child(2){background:#62c8a8}.split span:nth-child(3){background:#c6e9dd}
+    .split-labels{display:flex;justify-content:space-between;gap:8px;font-size:8px;color:#768780}
+    .sample-note{display:inline-flex;background:#fff6df;color:#855700;border:1px solid #efd99e;border-radius:999px;padding:5px 9px;font-size:9px;font-weight:900}
+
+    /* Modals */
+    .modal-layer{position:fixed;inset:0;background:rgba(14,33,27,.52);z-index:70;display:none;align-items:center;justify-content:center;padding:18px}
+    .modal-layer.open{display:flex}
+    .modal{width:min(760px,100%);max-height:92vh;overflow:auto;background:#fff;border-radius:23px;box-shadow:0 30px 90px rgba(0,0,0,.26)}
+    .modal-head{display:flex;align-items:center;justify-content:space-between;padding:19px 21px;border-bottom:1px solid var(--line)}
+    .modal-head h2{font-size:16px;margin:0}
+    .close{border:0;width:34px;height:34px;border-radius:10px;background:#f0f4f2;color:#53645e;font-size:20px}
+    .modal-body{padding:21px}
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+    .field{display:grid;gap:5px}
+    .field.full{grid-column:1/-1}
+    .field label{font-size:10px;font-weight:900;color:#51635c}
+    .field input,.field textarea,.field select{width:100%;border:1px solid var(--line);border-radius:12px;padding:11px;outline:none;background:#fff}
+    .field input:focus,.field textarea:focus,.field select:focus{border-color:#78b7a3;box-shadow:0 0 0 3px rgba(8,120,95,.08)}
+    .field textarea{min-height:100px;resize:vertical}
+    .hint{font-size:9px;color:#87948f}
+    .modal-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:15px 21px;border-top:1px solid var(--line)}
+    .moderation-progress{display:grid;gap:12px;padding:8px 0}
+    .moderation-step{display:flex;gap:10px;align-items:center;background:#f8faf9;border-radius:13px;padding:11px}
+    .step-icon{width:30px;height:30px;border-radius:10px;background:#e9f7f2;color:var(--brand);display:grid;place-items:center;font-weight:900}
+    .moderation-step strong{font-size:10px}.moderation-step span{font-size:9px;color:var(--muted);display:block}
+    .detail-layout{display:grid;grid-template-columns:minmax(0,1fr) 210px;gap:18px}
+    .detail-title{font-size:21px;line-height:1.55;margin:10px 0}
+    .detail-text{font-size:12px;color:#5e7069}
+    .comment{border-top:1px solid var(--line);padding:12px 0;font-size:10px}
+    .comment strong{font-size:10px}.comment p{margin:3px 0;color:#6c7c76}
+    .detail-side{display:grid;gap:9px;align-content:start}
+    .kv{background:#f7faf8;border-radius:12px;padding:10px}
+    .kv span{font-size:8px;color:#81908b;display:block}.kv strong{font-size:10px}
+
+    .toast{position:fixed;left:22px;bottom:22px;background:#153d34;color:#fff;padding:11px 15px;border-radius:12px;z-index:100;box-shadow:var(--shadow);opacity:0;transform:translateY(8px);pointer-events:none;transition:.22s;font-size:11px}
+    .toast.show{opacity:1;transform:none}
+
+    @media(max-width:960px){
+      .nav{display:none}
+      .composer-shell,.ideas-layout{grid-template-columns:1fr}
+      .wallet-card,.side-stack{position:static}
+      .side-stack{grid-template-columns:1fr 1fr}
+      .bonus-grid,.stats-grid{grid-template-columns:1fr 1fr}
+    }
+    @media(max-width:680px){
+      .container{width:min(100% - 22px,1160px)}
+      .topbar-inner{height:64px}.brand-sub{display:none}.wallet-pill span{display:none}
+      main{padding-top:18px}.composer{padding:21px;border-radius:20px}.composer h1{font-size:22px}
+      .idea-card{grid-template-columns:1fr}.idea-actions{width:100%;flex-direction:row;align-items:center}.support-btn{flex:1}
+      .side-stack,.bonus-grid,.stats-grid,.economy-grid,.form-grid,.detail-layout{grid-template-columns:1fr}
+      .field.full{grid-column:auto}.section-head{align-items:flex-start;flex-direction:column}
+      .history-table{display:block;overflow:auto;white-space:nowrap}
+      .account .avatar{display:none}
+    }
+  </style>
+</head>
+<body>
+<header class="topbar">
+  <div class="container topbar-inner">
+    <a class="brand" href="#" onclick="switchView('submit');return false">
+      <span class="logo">V</span>
+      <span>صدای ایزی<small class="brand-sub">پیشنهادها و ایده‌های ایزی‌تریدر</small></span>
+    </a>
+    <nav class="nav" aria-label="ناوبری اصلی">
+      <button class="active" data-view="submit">ثبت ایده</button>
+      <button data-view="ideas">ایده‌ها</button>
+      <button data-view="economy">اعتبار و پاداش</button>
+      <button data-view="bonuses">بونس‌های ماه قبل</button>
+    </nav>
+    <div class="account">
+      <button class="wallet-pill" onclick="switchView('economy')" title="مشاهده کیف پول">
+        <span>اعتبار مشارکت</span><strong id="headerTokens">۳</strong><i class="token-icon">V</i>
+      </button>
+      <span class="avatar">م</span>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="container">
+    <!-- Submit-first home -->
+    <section class="view active" id="submit">
+      <div class="composer-shell">
+        <div class="composer">
+          <span class="kicker">● نسخه آزمایشی ایزی‌تریدر</span>
+          <h1>چه چیزی را در ایزی‌تریدر بهتر کنیم؟</h1>
+          <p class="composer-intro">مسئله یا پیشنهادی که داری را بنویس. قبل از ثبت، هوش مصنوعی ایده‌های مشابه را پیدا می‌کند تا از تکرار جلوگیری شود.</p>
+          <textarea id="quickIdea" class="idea-input" maxlength="700" placeholder="مثلاً وقتی سفارش من رد می‌شود، متن خطا فنی است و نمی‌دانم برای اصلاح آن باید چه کاری انجام دهم..." oninput="handleIdeaTyping()"></textarea>
+          <div class="composer-foot">
+            <span class="char-count"><b id="charCount">۰</b> از ۷۰۰ نویسه</span>
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+              <span class="cost"><i class="token-icon">V</i> ثبت ایده جدید: ۲ اعتبار</span>
+              <button id="analyzeBtn" class="btn btn-primary" onclick="analyzeIdea()" disabled>بررسی ایده با هوش مصنوعی</button>
+            </div>
+          </div>
+
+          <div class="ai-box" id="aiBox">
+            <div class="ai-head">
+              <div class="ai-title"><i class="ai-dot"></i> چند ایده شبیه پیشنهاد تو پیدا شد</div>
+              <span class="ai-state">تحلیل شباهت انجام شد</span>
+            </div>
+            <div class="similar-list" id="similarList"></div>
+            <div class="continue-box">
+              <span>هیچ‌کدام دقیقاً مسئله تو نیست؟ ایده جدید را با ۲ اعتبار ثبت کن.</span>
+              <button class="btn btn-outline btn-sm" onclick="openCompleteIdea()">ادامه ثبت ایده</button>
+            </div>
+          </div>
+        </div>
+
+        <aside class="wallet-card">
+          <div class="wallet-head"><strong>کیف پول مشارکت</strong><span>دوره جاری</span></div>
+          <div class="wallet-balance" id="walletTokens">۳</div>
+          <div class="wallet-label">اعتبار قابل خرج</div>
+          <div class="wallet-divider"></div>
+          <div class="wallet-row"><span>ثبت ایده جدید</span><strong>۲ اعتبار</strong></div>
+          <div class="wallet-row"><span>حمایت از ایده</span><strong>۱ اعتبار</strong></div>
+          <div class="wallet-row"><span>مشارکت پذیرفته‌شده</span><strong>۱+ اعتبار</strong></div>
+          <button class="btn" onclick="switchView('economy')">جزئیات اقتصاد مشارکت</button>
+        </aside>
+      </div>
+
+      <div class="section-head">
+        <div><h2>ایده‌هایی که ارزش دیدن دارند</h2><p>قبل از ثبت ایده جدید، ببین دیگران چه مسائلی را مطرح کرده‌اند.</p></div>
+        <div class="filters">
+          <button class="chip active" onclick="filterIdeas('all',this)">همه</button>
+          <button class="chip" onclick="filterIdeas('سفارش‌گذاری',this)">سفارش</button>
+          <button class="chip" onclick="filterIdeas('جستجو',this)">جستجو</button>
+          <button class="chip" onclick="filterIdeas('هوش مصنوعی',this)">هوش مصنوعی</button>
+        </div>
+      </div>
+
+      <div class="ideas-layout">
+        <div class="idea-list" id="featuredIdeas"></div>
+        <aside class="side-stack">
+          <div class="panel">
+            <h3>Moderator هوش مصنوعی، همیشه فعال</h3>
+            <p>هر پیام پیش از انتشار بررسی، دسته‌بندی و در صورت نیاز پاسخ داده می‌شود.</p>
+            <div class="moderator-line"><i class="mod-icon">✓</i><div><strong>بررسی انتشار</strong><span>محتوای نامرتبط، حساس یا مغایر منتشر نمی‌شود.</span></div></div>
+            <div class="moderator-line"><i class="mod-icon">#</i><div><strong>تگ‌گذاری خودکار</strong><span>ایده‌ها بر اساس بخش و موضوع دسته‌بندی می‌شوند.</span></div></div>
+            <div class="moderator-line"><i class="mod-icon">AI</i><div><strong>پاسخ اولیه</strong><span>سؤال‌های دارای پاسخ مصوب، همان لحظه پاسخ می‌گیرند.</span></div></div>
+          </div>
+          <div class="panel">
+            <h3>چرا اعتبار محدود است؟</h3>
+            <p>تا به‌جای «ایده‌باران»، روی مسائل مهم‌تر تمرکز کنیم و پیش از ثبت، پیشنهادهای موجود را بخوانیم و تقویت کنیم.</p>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- All ideas -->
+    <section class="view" id="ideas">
+      <div class="section-head" style="margin-top:0">
+        <div><h2>همه ایده‌ها</h2><p>پیشنهادها را بخوان، تکمیل کن یا با یک اعتبار از آن‌ها حمایت کن.</p></div>
+        <button class="btn btn-primary" onclick="switchView('submit');document.getElementById('quickIdea').focus()">＋ ثبت ایده</button>
+      </div>
+      <div class="composer" style="padding:17px;margin-bottom:14px;box-shadow:none;border-radius:18px">
+        <div style="display:flex;gap:9px;flex-wrap:wrap">
+          <input id="searchInput" oninput="renderAllIdeas()" placeholder="جستجو در عنوان و متن ایده‌ها..." style="flex:1;min-width:230px;border:1px solid var(--line);border-radius:12px;padding:10px;outline:none" />
+          <select id="sortInput" onchange="renderAllIdeas()" style="border:1px solid var(--line);border-radius:12px;padding:9px;background:#fff"><option value="hot">داغ‌ترین</option><option value="new">جدیدترین</option><option value="support">بیشترین حمایت</option></select>
+        </div>
+      </div>
+      <div class="ideas-layout">
+        <div class="idea-list" id="allIdeas"></div>
+        <aside class="side-stack">
+          <div class="panel"><h3>وضعیت‌ها</h3><div class="legend"><div class="legend-row"><span>در حال بررسی</span><b>۲۸</b></div><div class="legend-row"><span>برنامه‌ریزی‌شده</span><b>۱۴</b></div><div class="legend-row"><span>در حال اجرا</span><b>۷</b></div><div class="legend-row"><span>منتشرشده</span><b>۱۱</b></div></div></div>
+          <div class="panel"><h3>قاعده حمایت</h3><p>هر فرد حداکثر یک اعتبار روی هر ایده خرج می‌کند. حمایت تا قبل از ورود ایده به مرحله «در حال بررسی» قابل پس‌گرفتن است.</p></div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- Economy -->
+    <section class="view" id="economy">
+      <div class="section-head" style="margin-top:0">
+        <div><h2>اعتبار مشارکت و امتیاز اثرگذاری</h2><p>اعتبار برای مشارکت خرج می‌شود؛ امتیاز اثرگذاری از نتیجه واقعی مشارکت به دست می‌آید.</p></div>
+        <span class="sample-note">اعداد این نسخه برای پایلوت هستند</span>
+      </div>
+      <div class="stats-grid">
+        <div class="stat"><span class="stat-label">اعتبار مشارکت فعلی</span><strong id="economyTokens">۳</strong><small>سقف موجودی: ۴ اعتبار</small></div>
+        <div class="stat"><span class="stat-label">امتیاز اثرگذاری</span><strong id="impactScore">۸۴۰</strong><small>۱۶۰ امتیاز تا امکان دریافت پاداش</small></div>
+        <div class="stat"><span class="stat-label">زمان شارژ بعدی</span><strong style="font-size:18px">اول ماه آینده</strong><small>در صورت خرج‌کردن اعتبار در دوره جاری</small></div>
+      </div>
+
+      <div class="economy-grid">
+        <article class="economy-card">
+          <h3>اعتبار مشارکت (Voice Credit)</h3>
+          <p>ارزش ریالی ندارد و فقط برای ثبت یا حمایت از ایده استفاده می‌شود.</p>
+          <div class="rule-list">
+            <div class="rule"><span>شارژ دوره‌ای کاربر فعال</span><b class="delta plus">+۳</b></div>
+            <div class="rule"><span>ثبت ایده جدید</span><b class="delta minus">−۲</b></div>
+            <div class="rule"><span>حمایت از ایده دیگران</span><b class="delta minus">−۱</b></div>
+            <div class="rule"><span>مشارکت پذیرفته‌شده</span><b class="delta plus">+۱</b></div>
+            <div class="rule"><span>محتوای اسپم یا خارج از موضوع</span><b class="delta minus">−۲</b></div>
+          </div>
+        </article>
+        <article class="economy-card">
+          <h3>امتیاز اثرگذاری (Impact Point)</h3>
+          <p>از مشارکت مؤثر و ایده‌های اجراشده ایجاد می‌شود و می‌تواند به پاداش تبدیل شود.</p>
+          <div class="rule-list">
+            <div class="rule"><span>مشارکت پذیرفته‌شده در تکمیل ایده</span><b class="delta plus">+۲۰</b></div>
+            <div class="rule"><span>ورود ایده به مرحله بررسی</span><b class="delta plus">+۵۰</b></div>
+            <div class="rule"><span>ورود ایده به برنامه محصول</span><b class="delta plus">+۱۰۰</b></div>
+            <div class="rule"><span>مشارکت در تست قابلیت</span><b class="delta plus">+۵۰ تا ۱۵۰</b></div>
+          </div>
+          <div class="cashout">
+            <div class="cashout-head"><span>پیشرفت تا حداقل دریافت پاداش</span><strong>۸۴٪</strong></div>
+            <div class="progress"><span style="width:84%"></span></div>
+            <small>در پایلوت: ۱٬۰۰۰ امتیاز = ۱ میلیون تومان؛ با سقف بودجه و تأیید نهایی.</small>
+          </div>
+        </article>
+      </div>
+
+      <div class="section-head"><div><h2>تاریخچه کیف پول</h2><p>تمام تغییرات اعتبار و امتیاز شفاف و قابل پیگیری است.</p></div></div>
+      <table class="history-table">
+        <thead><tr><th>تاریخ</th><th>رویداد</th><th>نوع</th><th>تغییر</th><th>مانده</th></tr></thead>
+        <tbody id="walletHistory">
+          <tr><td>۲۵ تیر</td><td>شارژ دوره‌ای کاربر فعال</td><td>اعتبار مشارکت</td><td style="color:var(--brand);font-weight:900">+۳</td><td>۳</td></tr>
+          <tr><td>۱۸ تیر</td><td>مشارکت پذیرفته‌شده در ایده «رد سفارش»</td><td>امتیاز اثرگذاری</td><td style="color:var(--brand);font-weight:900">+۲۰</td><td>۸۴۰</td></tr>
+          <tr><td>۱۰ تیر</td><td>ورود ایده به برنامه محصول</td><td>امتیاز اثرگذاری</td><td style="color:var(--brand);font-weight:900">+۱۰۰</td><td>۸۲۰</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Bonuses -->
+    <section class="view" id="bonuses">
+      <div class="section-head" style="margin-top:0">
+        <div><h2>بونس‌های ماه قبل</h2><p>پاداش ایده‌های منتشرشده بر اساس اثر واقعی و مشارکت جمعی تقسیم شده است.</p></div>
+        <span class="sample-note">داده نمونه برای نمایش مدل</span>
+      </div>
+      <div class="stats-grid" style="margin-bottom:16px">
+        <div class="stat"><span class="stat-label">مجموع استخر پاداش</span><strong>۸٬۰۰۰ امتیاز</strong><small>برای ۳ ایده منتشرشده</small></div>
+        <div class="stat"><span class="stat-label">دریافت‌کنندگان پاداش</span><strong>۴۲ نفر</strong><small>ایده‌دهنده، حامی و مشارکت‌کننده</small></div>
+        <div class="stat"><span class="stat-label">قابلیت‌های منتشرشده</span><strong>۳</strong><small>پس از ارزیابی ۳۰ روزه اثر</small></div>
+      </div>
+      <div class="bonus-grid">
+        <article class="bonus-card">
+          <span class="bonus-badge">اثر راهبردی</span><div class="bonus-pool">۴٬۰۰۰ امتیاز</div>
+          <div class="bonus-title">توضیح ساده علت رد سفارش و اقدام پیشنهادی</div><div class="bonus-meta">کاهش ابهام کاربران و تماس‌های مرتبط با خطای سفارش</div>
+          <div class="split"><span></span><span></span><span></span></div>
+          <div class="split-labels"><span>۲۵٪ ایده‌دهنده</span><span>۶۰٪ حامیان</span><span>۱۵٪ مشارکت‌کنندگان</span></div>
+        </article>
+        <article class="bonus-card">
+          <span class="bonus-badge">اثر بزرگ</span><div class="bonus-pool">۲٬۵۰۰ امتیاز</div>
+          <div class="bonus-title">جستجوی سریع نماد بدون نیاز به تایپ کامل</div><div class="bonus-meta">کاهش زمان رسیدن به نماد و استفاده بیشتر از جستجو</div>
+          <div class="split"><span></span><span></span><span></span></div>
+          <div class="split-labels"><span>۲۵٪ ایده‌دهنده</span><span>۶۰٪ حامیان</span><span>۱۵٪ مشارکت‌کنندگان</span></div>
+        </article>
+        <article class="bonus-card">
+          <span class="bonus-badge">اثر متوسط</span><div class="bonus-pool">۱٬۵۰۰ امتیاز</div>
+          <div class="bonus-title">نمایش سود و زیان تحقق‌یافته در پرتفوی</div><div class="bonus-meta">شفاف‌تر شدن نتیجه معاملات بسته‌شده برای کاربران</div>
+          <div class="split"><span></span><span></span><span></span></div>
+          <div class="split-labels"><span>۲۵٪ ایده‌دهنده</span><span>۶۰٪ حامیان</span><span>۱۵٪ مشارکت‌کنندگان</span></div>
+        </article>
+      </div>
+      <div class="economy-card" style="margin-top:17px">
+        <h3>قاعده تقسیم پاداش</h3>
+        <p style="margin-bottom:0">فقط حمایت‌هایی که قبل از ورود ایده به مرحله «در حال بررسی» ثبت شده باشند در سهم پاداش محاسبه می‌شوند. سطح پاداش پس از انتشار و ارزیابی داده‌های استفاده، کاهش خطا، تماس پشتیبانی یا بهبود تبدیل تعیین می‌شود.</p>
+      </div>
+    </section>
+  </div>
+</main>
+
+<!-- Complete idea modal -->
+<div class="modal-layer" id="ideaModal">
+  <div class="modal">
+    <div class="modal-head"><h2>تکمیل و ثبت ایده</h2><button class="close" onclick="closeModal('ideaModal')">×</button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="field full"><label>عنوان پیشنهادی هوش مصنوعی</label><input id="ideaTitle" value="" /></div>
+        <div class="field full"><label>شرح مسئله</label><textarea id="ideaDescription"></textarea><span class="hint">تمرکز اصلی روی مسئله و اثر آن باشد، نه فقط راه‌حل.</span></div>
+        <div class="field"><label>بخش مرتبط</label><select id="ideaCategory"><option>معامله و سفارش‌گذاری</option><option>پرتفوی و دارایی</option><option>نمای بازار و جستجو</option><option>واریز و برداشت</option><option>ورود و شروع سرمایه‌گذاری</option><option>دستیار هوشمند</option></select></div>
+        <div class="field"><label>شدت مسئله</label><select><option>تجربه نامطلوب</option><option>مانع انجام کار</option><option>خطای پرتکرار</option><option>فرصت رشد</option></select></div>
+        <div class="field full"><label>راه‌حل پیشنهادی <span style="color:#899690;font-weight:400">(اختیاری)</span></label><textarea placeholder="راه‌حلی که به ذهنت می‌رسد..."></textarea></div>
+        <div class="field full"><label style="display:flex;align-items:center;gap:7px"><input type="checkbox" /> نمایش ناشناس نام پیشنهاددهنده</label></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <span class="cost"><i class="token-icon">V</i> هزینه ثبت: ۲ اعتبار</span>
+      <div style="display:flex;gap:8px"><button class="btn btn-ghost" onclick="closeModal('ideaModal')">انصراف</button><button class="btn btn-primary" onclick="submitNewIdea()">ارسال برای بررسی و انتشار</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- Moderation modal -->
+<div class="modal-layer" id="moderationModal">
+  <div class="modal" style="width:min(560px,100%)">
+    <div class="modal-head"><h2>بررسی Moderator هوش مصنوعی</h2><button class="close" onclick="closeModal('moderationModal')">×</button></div>
+    <div class="modal-body">
+      <div class="moderation-progress">
+        <div class="moderation-step"><i class="step-icon">✓</i><div><strong>بررسی محتوای پیام</strong><span>مغایرتی با قواعد انتشار پیدا نشد.</span></div></div>
+        <div class="moderation-step"><i class="step-icon">#</i><div><strong>دسته‌بندی و تگ‌گذاری</strong><span>تگ‌های پیشنهادی: سفارش‌گذاری، تجربه کاربری، خطای سفارش</span></div></div>
+        <div class="moderation-step"><i class="step-icon">AI</i><div><strong>ساخت عنوان و خلاصه</strong><span>متن برای انتشار خواناتر و کوتاه‌تر شد.</span></div></div>
+      </div>
+    </div>
+    <div class="modal-foot"><span style="font-size:9px;color:var(--muted)">در موارد مبهم، پیام به صف بررسی انسانی می‌رود.</span><button class="btn btn-primary" onclick="finishModeration()">مشاهده ایده منتشرشده</button></div>
+  </div>
+</div>
+
+<!-- Detail modal -->
+<div class="modal-layer" id="detailModal">
+  <div class="modal" style="width:min(860px,100%)">
+    <div class="modal-head"><h2>جزئیات ایده</h2><button class="close" onclick="closeModal('detailModal')">×</button></div>
+    <div class="modal-body" id="detailBody"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  let tokens = 3;
+  let lastCreatedId = null;
+  let activeFilter = 'all';
+  const supportedIds = new Set();
+
+  const ideas = [
+    {id:1,title:'توضیح ساده علت رد سفارش و پیشنهاد اقدام بعدی',desc:'به‌جای پیام فنی، علت رد سفارش به زبان قابل فهم نمایش داده شود و اقدام اصلاحی متناسب پیشنهاد شود.',category:'سفارش‌گذاری',tag:'تجربه کاربری',status:'برنامه‌ریزی‌شده',statusClass:'planned',support:186,comments:31,time:'۳ روز پیش',author:'نگار مرادی',match:94},
+    {id:2,title:'جستجوی سریع نماد بدون نیاز به تایپ کامل',desc:'نمادهای اخیر، پرتکرار و دسته‌بندی ETFها پیش از تایپ نمایش داده شوند تا کاربر سریع‌تر به نماد برسد.',category:'جستجو',tag:'رشد',status:'در حال اجرا',statusClass:'progress',support:147,comments:19,time:'۵ روز پیش',author:'امیر حسینی',match:89},
+    {id:3,title:'خلاصه هوشمند بازار در ابتدای روز معاملاتی',desc:'وضعیت شاخص‌ها، ورود و خروج پول، صنایع برتر و مهم‌ترین اتفاقات بازار در یک خلاصه کوتاه نمایش داده شود.',category:'هوش مصنوعی',tag:'نمای بازار',status:'در حال بررسی',statusClass:'review',support:168,comments:24,time:'۲ روز پیش',author:'مهدی نوروزی',match:82},
+    {id:4,title:'نمایش سود و زیان تحقق‌یافته در پرتفوی',desc:'نتیجه قطعی معاملات بسته‌شده در بازه‌های زمانی مختلف کنار سود و زیان روزانه نمایش داده شود.',category:'پرتفوی',tag:'تحلیل دارایی',status:'منتشرشده',statusClass:'done',support:132,comments:22,time:'۱ هفته پیش',author:'محمد قربانی',match:74},
+    {id:5,title:'پیگیری خودکار وضعیت واریز ناموفق',desc:'کاربر وضعیت تراکنش ناموفق را داخل ایزی ببیند و در صورت امکان واریز بدون تماس با پشتیبانی بازیابی شود.',category:'واریز و برداشت',tag:'پایداری',status:'در حال بررسی',statusClass:'review',support:119,comments:17,time:'۸ روز پیش',author:'الهام احمدی',match:70},
+    {id:6,title:'دستیار شروع سرمایه‌گذاری برای کاربر تازه‌وارد',desc:'دستیار با چند سؤال کوتاه، کاربر را به واریز وجه، صندوق‌ها یا اولین خرید مناسب هدایت کند.',category:'هوش مصنوعی',tag:'فعال‌سازی',status:'در حال اجرا',statusClass:'progress',support:98,comments:14,time:'۲ هفته پیش',author:'سارا کاظمی',match:66},
+    {id:7,title:'هشدار تغییر قدرت خرید پیش از ارسال سفارش',desc:'اگر قدرت خرید از زمان باز شدن فرم سفارش تغییر کرده، قبل از ارسال به کاربر اطلاع داده شود.',category:'سفارش‌گذاری',tag:'پیشگیری از خطا',status:'در حال بررسی',statusClass:'review',support:76,comments:9,time:'۲ هفته پیش',author:'رویا اکبری',match:61}
+  ];
+
+  function fa(n){return Number(n).toLocaleString('fa-IR')}
+  function updateWallet(){
+    ['headerTokens','walletTokens','economyTokens'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=fa(tokens)});
+  }
+
+  function switchView(id){
+    document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    document.querySelectorAll('.nav button[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===id));
+    if(id==='ideas') renderAllIdeas();
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  document.querySelectorAll('.nav button[data-view]').forEach(btn=>btn.addEventListener('click',()=>switchView(btn.dataset.view)));
+
+  function handleIdeaTyping(){
+    const text=document.getElementById('quickIdea').value;
+    document.getElementById('charCount').textContent=fa(text.length);
+    document.getElementById('analyzeBtn').disabled=text.trim().length<18;
+    if(text.trim().length<18) document.getElementById('aiBox').classList.remove('show');
+  }
+
+  function analyzeIdea(){
+    const text=document.getElementById('quickIdea').value.trim();
+    if(text.length<18){showToast('کمی بیشتر درباره مسئله توضیح بده');return}
+    const btn=document.getElementById('analyzeBtn');
+    btn.disabled=true;btn.textContent='در حال پیدا کردن ایده‌های مشابه...';
+    setTimeout(()=>{
+      const list=[ideas[0],ideas[1],ideas[6]];
+      document.getElementById('similarList').innerHTML=list.map(i=>similarCard(i)).join('');
+      document.getElementById('aiBox').classList.add('show');
+      btn.textContent='بررسی دوباره با هوش مصنوعی';btn.disabled=false;
+    },650);
+  }
+
+  function similarCard(i){
+    return `<div class="similar-item"><div><div class="similar-title" onclick="openDetail(${i.id})" style="cursor:pointer">${i.title}</div><div class="similar-meta"><span class="match">${fa(i.match)}٪ شباهت</span><span>${fa(i.support)} حمایت</span><span>${i.status}</span></div></div><button class="btn btn-soft btn-sm" onclick="supportIdea(${i.id})">حمایت با ۱ اعتبار</button></div>`;
+  }
+
+  function openCompleteIdea(){
+    if(tokens<2){showToast('برای ثبت ایده جدید به ۲ اعتبار نیاز داری');return}
+    const text=document.getElementById('quickIdea').value.trim();
+    document.getElementById('ideaDescription').value=text;
+    const short=text.replace(/[.؟!].*/, '').slice(0,70);
+    document.getElementById('ideaTitle').value=short || 'پیشنهاد جدید برای ایزی‌تریدر';
+    openModal('ideaModal');
+  }
+
+  function submitNewIdea(){
+    const title=document.getElementById('ideaTitle').value.trim();
+    const desc=document.getElementById('ideaDescription').value.trim();
+    if(title.length<5||desc.length<15){showToast('عنوان و شرح مسئله را کامل کن');return}
+    if(tokens<2){showToast('اعتبار کافی برای ثبت ایده نداری');return}
+    tokens-=2;updateWallet();
+    const newIdea={id:Date.now(),title,desc,category:document.getElementById('ideaCategory').value,tag:'ایده جدید',status:'منتشرشده توسط AI',statusClass:'review',support:0,comments:0,time:'همین حالا',author:'مسعود',match:0};
+    ideas.unshift(newIdea);lastCreatedId=newIdea.id;
+    document.getElementById('walletHistory').insertAdjacentHTML('afterbegin',`<tr><td>امروز</td><td>ثبت ایده «${escapeHtml(title)}»</td><td>اعتبار مشارکت</td><td style="color:var(--danger);font-weight:900">−۲</td><td>${fa(tokens)}</td></tr>`);
+    closeModal('ideaModal');openModal('moderationModal');
+  }
+
+  function finishModeration(){
+    closeModal('moderationModal');
+    document.getElementById('quickIdea').value='';handleIdeaTyping();renderFeatured();
+    openDetail(lastCreatedId);
+  }
+
+  function ideaCard(i){
+    const active=supportedIds.has(i.id);
+    return `<article class="idea-card"><div class="idea-main"><div class="idea-flags"><span class="status ${i.statusClass}">${i.status}</span><span class="tag">${i.category}</span><span class="tag">${i.tag}</span></div><div class="idea-title" onclick="openDetail(${i.id})">${escapeHtml(i.title)}</div><p class="idea-desc">${escapeHtml(i.desc)}</p><div class="idea-meta"><span>${i.author}</span><span>◷ ${i.time}</span><span>◌ ${fa(i.comments)} دیدگاه</span></div></div><div class="idea-actions"><button class="support-btn ${active?'active':''}" onclick="supportIdea(${i.id})">${active?'✓ حمایت شد':'▲ حمایت با ۱ اعتبار'}</button><span class="support-count"><b data-support="${i.id}">${fa(i.support)}</b> حامی</span></div></article>`;
+  }
+
+  function renderFeatured(){
+    const list=activeFilter==='all'?ideas:ideas.filter(i=>i.category===activeFilter||i.tag===activeFilter);
+    document.getElementById('featuredIdeas').innerHTML=list.slice(0,5).map(ideaCard).join('');
+  }
+  function filterIdeas(filter,el){activeFilter=filter;document.querySelectorAll('#submit .chip').forEach(c=>c.classList.remove('active'));el.classList.add('active');renderFeatured()}
+  function renderAllIdeas(){
+    const q=(document.getElementById('searchInput')?.value||'').trim();
+    const sort=document.getElementById('sortInput')?.value||'hot';
+    let list=ideas.filter(i=>(i.title+' '+i.desc+' '+i.category+' '+i.tag).includes(q));
+    if(sort==='support') list=[...list].sort((a,b)=>b.support-a.support);
+    if(sort==='new') list=[...list].reverse();
+    document.getElementById('allIdeas').innerHTML=list.length?list.map(ideaCard).join(''):'<div class="panel" style="text-align:center;color:var(--muted)">ایده‌ای با این عبارت پیدا نشد.</div>';
+  }
+
+  function supportIdea(id){
+    const idea=ideas.find(i=>i.id===id);if(!idea)return;
+    if(supportedIds.has(id)){
+      if(idea.status!=='در حال بررسی'&&idea.status!=='برنامه‌ریزی‌شده'&&idea.status!=='در حال اجرا'&&idea.status!=='منتشرشده'){
+        supportedIds.delete(id);idea.support--;tokens++;showToast('حمایت برداشته شد و اعتبار برگشت');
+      }else{showToast('پس از ورود ایده به مرحله بررسی، حمایت قابل پس‌گرفتن نیست');return}
+    }else{
+      if(tokens<1){showToast('برای حمایت به یک اعتبار نیاز داری');return}
+      if(idea.author==='مسعود'){showToast('نمی‌توانی از ایده خودت حمایت کنی');return}
+      supportedIds.add(id);idea.support++;tokens--;showToast('حمایت ثبت شد؛ در صورت اجرای ایده در پاداش سهیم می‌شوی');
+      document.getElementById('walletHistory').insertAdjacentHTML('afterbegin',`<tr><td>امروز</td><td>حمایت از «${escapeHtml(idea.title)}»</td><td>اعتبار مشارکت</td><td style="color:var(--danger);font-weight:900">−۱</td><td>${fa(tokens)}</td></tr>`);
+    }
+    updateWallet();renderFeatured();renderAllIdeas();
+    document.querySelectorAll(`[data-support="${id}"]`).forEach(el=>el.textContent=fa(idea.support));
+  }
+
+  function openDetail(id){
+    const i=ideas.find(x=>x.id===id);if(!i)return;
+    const active=supportedIds.has(i.id);
+    document.getElementById('detailBody').innerHTML=`<div class="detail-layout"><div><div class="idea-flags"><span class="status ${i.statusClass}">${i.status}</span><span class="tag">${i.category}</span><span class="tag">${i.tag}</span></div><h1 class="detail-title">${escapeHtml(i.title)}</h1><div class="idea-meta"><span>${i.author}</span><span>◷ ${i.time}</span><span>${fa(i.support)} حامی</span></div><h3 style="font-size:13px;margin:22px 0 5px">شرح مسئله</h3><p class="detail-text">${escapeHtml(i.desc)}</p><h3 style="font-size:13px;margin:24px 0 5px">مشارکت‌ها</h3><div class="comment"><strong>سارا کاظمی</strong><p>به نظرم این مسئله در نسخه موبایل شدیدتر است؛ بهتر است داده تفکیکی موبایل و دسکتاپ هم بررسی شود.</p></div><div class="comment"><strong>تیم محصول ایزی</strong><p>این مشارکت به‌عنوان اطلاعات تکمیلی پذیرفته شد و در ارزیابی مسئله استفاده می‌شود.</p></div><div class="field" style="margin-top:13px"><label>نکته یا اطلاعات تکمیلی</label><textarea placeholder="مشارکت‌های پذیرفته‌شده یک اعتبار و امتیاز اثرگذاری دریافت می‌کنند."></textarea><button class="btn btn-primary btn-sm" style="justify-self:start" onclick="showToast('مشارکت برای بررسی Moderator ارسال شد')">ارسال مشارکت</button></div></div><aside class="detail-side"><button class="support-btn ${active?'active':''}" onclick="supportIdea(${i.id});openDetail(${i.id})">${active?'✓ حمایت شد':'▲ حمایت با ۱ اعتبار'}</button><div class="kv"><span>مالک بررسی</span><strong>تیم محصول ایزی‌تریدر</strong></div><div class="kv"><span>آخرین به‌روزرسانی</span><strong>دیروز</strong></div><div class="kv"><span>وضعیت Moderator</span><strong>تأیید و تگ‌گذاری‌شده</strong></div><div class="kv"><span>سهم پاداش احتمالی</span><strong>حامیان واجد شرایط: ۶۰٪</strong></div></aside></div>`;
+    openModal('detailModal');
+  }
+
+  function openModal(id){document.getElementById(id).classList.add('open')}
+  function closeModal(id){document.getElementById(id).classList.remove('open')}
+  document.querySelectorAll('.modal-layer').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open')}));
+  function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>t.classList.remove('show'),2800)}
+  function escapeHtml(value){return String(value).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#039;','"':'&quot;'}[c]))}
+
+  renderFeatured();renderAllIdeas();updateWallet();
+</script>
+</body>
+</html>
