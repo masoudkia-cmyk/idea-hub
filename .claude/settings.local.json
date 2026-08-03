@@ -10,7 +10,9 @@
       "Bash(npm run *)",
       "Bash(curl -sI http://localhost:5173/idea-hub/)",
       "Bash(rm -f src/utils/priorityScore.ts src/utils/priorityScore.test.ts src/utils/ideaFilters.ts src/utils/ideaFilters.test.ts src/components/form/IdeaForm.tsx src/components/form/IdeaForm.test.tsx)",
-      "Bash(rmdir src/components/form)"
+      "Bash(rmdir src/components/form)",
+      "Bash(npm test *)",
+      "Bash(echo \"EXIT:$?\")"
     ]
   }
 }
